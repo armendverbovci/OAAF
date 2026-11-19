@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OAAF online assessment: rate capabilities and reach a decision</title>
+<meta name="description" content="Free online tool for the Operational AI Assurance Framework (OAAF). Rate each capability of an AI system or agent with the two-question test, find which requirements apply, record findings and get a Ready, Ready with Conditions or Not Ready decision per capability. Runs entirely in your browser.">
+<link rel="canonical" href="https://armendverbovci.github.io/OAAF/tool/">
+<style>
+:root{--navy:#1f3a5f;--ink:#1d1d1f;--muted:#5b6470;--line:#d9dee5;--bg:#f6f7f9;--card:#fff;
+--high:#b42318;--med:#b54708;--low:#027a48;--crit:#b42318;--sig:#b54708;--rout:#475467}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5}
+header{background:var(--navy);color:#fff;padding:28px 20px}
+header .wrap{max-width:980px;margin:0 auto}
+header h1{margin:0 0 6px;font-size:1.6rem}
+header p{margin:0;opacity:.9;max-width:760px}
+header a{color:#fff}
+main{max-width:980px;margin:0 auto;padding:20px}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;margin:0 0 18px}
+h2{margin:0 0 4px;font-size:1.2rem;color:var(--navy)}
+h3{margin:18px 0 8px;font-size:1rem;color:var(--navy)}
+.hint{color:var(--muted);font-size:.92rem;margin:0 0 14px}
+label{font-weight:600;font-size:.9rem}
+input[type=text],select,textarea{font:inherit;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:#fff;width:100%}
+textarea{min-height:54px}
+button{font:inherit;padding:8px 14px;border-radius:6px;border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer}
+button.secondary{background:#fff;color:var(--navy)}
+button.link{background:none;border:none;color:var(--high);padding:4px 6px}
+.row{display:grid;gap:10px;align-items:end}
+.cap{border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:10px}
+.cap-grid{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end}
+@media(max-width:720px){.cap-grid{grid-template-columns:1fr}}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.8rem;font-weight:700;color:#fff}
+.b-High,.b-Critical,.b-NotReady{background:var(--high)}
+.b-Medium,.b-Significant,.b-Cond{background:var(--med)}
+.b-Low,.b-Routine,.b-Ready{background:var(--low)}
+.b-Routine{background:var(--rout)}
+.why{font-size:.88rem;color:var(--muted);margin-top:6px}
+.tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:720px){.tier-grid{grid-template-columns:1fr}}
+.callout{background:#eef3f9;border-left:4px solid var(--navy);padding:10px 14px;border-radius:6px;margin-top:12px}
+.warn{background:#fff6ed;border-left-color:var(--med)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+.req{border-bottom:1px solid var(--line);padding:10px 0}
+.req-head{display:grid;grid-template-columns:70px 1fr 210px;gap:10px;align-items:start}
+@media(max-width:720px){.req-head{grid-template-columns:1fr}}
+.rid{font-weight:700;color:var(--navy)}
+.cc{color:var(--high);font-weight:700}
+.ev{font-size:.85rem;color:var(--muted)}
+.more{margin:8px 0 0 80px;display:grid;gap:8px}
+@media(max-width:720px){.more{margin-left:0}}
+.caps-check label{font-weight:400;margin-right:14px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.small{font-size:.85rem;color:var(--muted)}
+footer{max-width:980px;margin:0 auto;padding:10px 20px 40px;color:var(--muted);font-size:.85rem}
+pre{white-space:pre-wrap;background:#f2f4f7;padding:12px;border-radius:6px;font-size:.82rem;max-height:320px;overflow:auto}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>OAAF online assessment</h1>
+<p>Rate what your AI system or agent can do, see which requirements apply, record what you find, and get a decision per capability using the fixed rules of the <a href="../">Operational AI Assurance Framework (OAAF) v1.0</a>. Everything runs in your browser. Nothing is sent anywhere.</p>
+</div></header>
+<main>
+
+<section>
+<h2>1. The system</h2>
+<p class="hint">Name the system as it is actually operated. Set a materiality threshold if your organisation has one. If it has none, any consequence that moves money, commits the organisation to a third party or communicates externally on its behalf counts as material.</p>
+<div class="row" style="grid-template-columns:1fr 1fr">
+<div><label for="sysname">System name</label><input type="text" id="sysname" placeholder="for example, Customer email agent"></div>
+<div><label for="material">Materiality threshold (optional)</label><input type="text" id="material" placeholder="for example, 2,000 euros"></div>
+</div>
+<div class="toolbar" style="margin-top:12px">
+<button class="secondary" id="loadExample">Load worked example B3</button>
+<button class="secondary" id="importBtn">Import JSON</button>
+<input type="file" id="importFile" accept=".json,application/json" hidden>
+<button class="secondary" id="resetBtn">Start again</button>
+</div>
+</section>
+
+<section>
+<h2>2. Capabilities and the two-question test</h2>
+<p class="hint">A capability is something the system can cause to happen: approve a payment, send a reply, reorder a queue. For agents, treat each class of tool action as a capability. Rate each one with two questions.</p>
+<div class="callout small"><b>Q1. Human acceptance.</b> Must a human positively accept this specific output before it takes effect? Being able to see it, sampling outputs, or stepping in afterwards does not count.<br><b>Q2. Consequence.</b> If the output is wrong, would the harm be irreversible before it would normally be detected, or exceed the materiality threshold? Judge the consequence, not the action: reordering a queue is reversible, the delay it causes is not.</div>
+<div id="caps" style="margin-top:14px"></div>
+<button class="secondary" id="addCap">Add a capability</button>
+</section>
+
+<section>
+<h2>3. Consequence Tier</h2>
+<p class="hint">The highest factor governs. A system with any High capability is at least Tier 2. Regulatory classification (for example EU AI Act high-risk status) is recorded separately and does not set the tier.</p>
+<div class="tier-grid">
+<div><label for="fHarm">Worst credible harm</label><select id="fHarm"></select></div>
+<div><label for="fRev">Reversibility</label><select id="fRev"></select></div>
+<div><label for="fAuto">Autonomy</label><select id="fAuto"></select></div>
+</div>
+<div id="tierOut" class="callout"></div>
+</section>
+
+<section>
+<h2>4. Requirements</h2>
+<p class="hint">Only the requirements that apply at this tier are shown. <span class="cc">◆</span> marks control-critical requirements: the ones needed to detect a problem and stop it. Prefer records of a control operating over documents describing it. A control owned by another team counts only if it is evidenced against this system.</p>
+<div id="reqs"></div>
+</section>
+
+<section>
+<h2>5. Decision per capability</h2>
+<p class="hint">Findings are rated by rule. Any open Critical finding makes a capability Not Ready. There is no score: one missing stop mechanism is never averaged away.</p>
+<div id="decisions"></div>
+<h3>Findings</h3>
+<div id="findings"></div>
+<div id="warnings"></div>
+<div class="toolbar" style="margin-top:14px">
+<button id="copyMd">Copy report (Markdown)</button>
+<button class="secondary" id="dlJson">Download assessment (JSON)</button>
+<button class="secondary" id="printBtn">Print or save as PDF</button>
+</div>
+<p class="small">The JSON file works with the OAAF decision script and the AI assistant skill, so you can check this result independently.</p>
+</section>
+
+</main>
+<footer>
+OAAF v1.0 by Armend Verbovci, licensed CC BY 4.0. DOI <a href="https://doi.org/10.5281/zenodo.24352952">10.5281/zenodo.24352952</a>. This tool applies Sections 4.3, 4.4, 7.3 and 7.4 of the framework. It does not establish compliance with any law or standard. <a href="../FRAMEWORK.html">Read the full framework</a>.
+</footer>
+
+<script id="oaaf-data" type="application/json">{"$comment": "Machine-readable summary of the Operational AI Assurance Framework (OAAF) v1.0. The full text (FRAMEWORK.md / PDF) is authoritative.", "name": "Operational AI Assurance Framework", "short_name": "OAAF", "version": "1.0", "date": "2026-11", "author": "Armend Verbovci", "licence": "CC-BY-4.0", "summary": "A free, sector-neutral method for deciding, on evidence, whether a deployed AI system or AI agent should keep operating, be restricted, or be stopped, adapted from aviation safety management.", "principles": ["System of operation: assurance applies to the AI-enabled system as deployed and operated, not the model alone.", "Context dependency: operational risk depends on context, not capability.", "Proportionality: rigour scales with consequence.", "Continuous, not one-off: assurance is maintained for the life of the system through continuous, periodic and event-triggered activity.", "Assurance is not performance: good performance figures are not evidence that degradation would be noticed.", "Acceptable, not absolute: the objective is acceptable operation within a defined context and risk tolerance.", "Independence in proportion to risk.", "Accountability requires authority: an owner who cannot restrict or stop the system is a control deficiency.", "Negative-space assurance: assurance must cover what the system does not flag, escalate or surface."], "capability_criticality": {"q1": "Human acceptance: must a human positively accept this specific output before it takes effect? Visibility, sampling or after-the-fact intervention do not count.", "q2": "Consequence: if the output is wrong, would the harm be irreversible before it would normally be detected, or exceed the materiality threshold? Judge reversibility of the consequence, not of the action.", "default_materiality": "Where no threshold is set, any consequence that moves money, commits the organisation to a third party or communicates externally on its behalf is material.", "rule": {"q1_no_q2_yes": "High", "q1_no_q2_no": "Medium", "q1_yes_q2_yes": "Medium", "q1_yes_q2_no": "Low"}, "note": "An attribute used only to set the minimum tier and to rate findings. Not a second tier system."}, "consequence_tiers": {"1": {"harm": "Minor financial or reputational", "reversibility": "Easily reversed", "autonomy": "Easily overridden", "requirements_applying": 8}, "2": {"harm": "Operational disruption, material financial loss, recoverable harm to individuals", "reversibility": "Reversible with effort", "autonomy": "Meaningful autonomy with a human in the loop", "requirements_applying": 25}, "3": {"harm": "Severe or irreversible harm to people, critical services or the organisation", "reversibility": "Difficult or impossible to reverse", "autonomy": "Limited or no practical override window", "requirements_applying": 36}, "rules": ["The highest applicable factor governs.", "A system with any High capability is at least Tier 2.", "Regulatory classification is recorded separately as an overlay and does not set the tier."]}, "control_states": [{"id": "S0", "name": "Normal", "meaning": "Operating within validated conditions", "typical_authority": "Operating team"}, {"id": "S1", "name": "Degraded", "meaning": "Operating conditions or assurance margin deteriorated, within tolerance", "typical_authority": "Operating team, owner informed"}, {"id": "S2", "name": "Restricted", "meaning": "Operation permitted only with added controls, such as human acceptance or reduced limits", "typical_authority": "Accountable owner"}, {"id": "S3", "name": "Contained", "meaning": "Capability constrained, isolated or on fallback", "typical_authority": "Accountable owner, management informed"}, {"id": "S4", "name": "Unacceptable", "meaning": "Continued operation exceeds accepted risk; stop the affected capability", "typical_authority": "Accountable owner or anyone with stop authority"}], "control_state_notes": ["States are defined for both model condition and service condition (availability, stale data, monitoring outage, dependency failure).", "States apply per capability.", "Leaving S3 or S4 requires return to service (P5-04)."], "requirements": [{"id": "P1-01", "domain_id": "P1", "domain": "Accountability and authority", "requirement": "A named individual is designated as accountable owner of the deployed system.", "applies_from_tier": 1, "control_critical": true, "typical_evidence": ["Appointment record", "System Card"]}, {"id": "P1-02", "domain_id": "P1", "domain": "Accountability and authority", "requirement": "Technical, risk and business responsibilities for the system are documented and assigned to named roles.", "applies_from_tier": 2, "control_critical": false, "typical_evidence": ["Responsibility matrix"]}, {"id": "P1-03", "domain_id": "P1", "domain": "Accountability and authority", "requirement": "An escalation path from the accountable owner to senior management is documented.", "applies_from_tier": 2, "control_critical": false, "typical_evidence": ["Procedure", "organisation chart"]}, {"id": "P1-04", "domain_id": "P1", "domain": "Accountability and authority", "requirement": "An accountability statement sets out the responsibilities of suppliers, model providers and deployers.", "applies_from_tier": 3, "control_critical": false, "typical_evidence": ["Signed statement", "contract clauses"]}, {"id": "P1-05", "domain_id": "P1", "domain": "Accountability and authority", "requirement": "(a) The accountable owner holds documented authority to initiate restriction or stopping of any capability; and (b) a mechanism exists to execute it within a response time set for each capability, and it has been exercised within the review period.", "applies_from_tier": 2, "control_critical": true, "typical_evidence": ["Delegation of authority", "runbook", "test or exercise record"]}, {"id": "P2-01", "domain_id": "P2", "domain": "Context, hazards and risk", "requirement": "Foreseeable misuse and credible failure modes relevant to the operating context are documented.", "applies_from_tier": 1, "control_critical": false, "typical_evidence": ["Hazard list on the System Card"]}, {"id": "P2-02", "domain_id": "P2", "domain": "Context, hazards and risk", "requirement": "Structured hazard identification covers model, data, integration, infrastructure, human-factors and external-dependency failure modes, including hazards whose controls are owned by other functions (see the Boundary Rule, 7.2).", "applies_from_tier": 2, "control_critical": false, "typical_evidence": ["Hazard log with owner and interface recorded for each hazard"]}, {"id": "P2-03", "domain_id": "P2", "domain": "Context, hazards and risk", "requirement": "Risk is assessed using a documented method covering at least severity and likelihood, and where relevant detectability and control effectiveness.", "applies_from_tier": 2, "control_critical": false, "typical_evidence": ["Risk register", "method statement"]}, {"id": "P2-04", "domain_id": "P2", "domain": "Context, hazards and risk", "requirement": "The risk record is reviewed at a defined interval of no more than 12 months, and after every material change and every occurrence classed as Deviation or above.", "applies_from_tier": 3, "control_critical": false, "typical_evidence": ["Review records"]}, {"id": "P3-01", "domain_id": "P3", "domain": "Operational boundaries", "requirement": "Conditions requiring restriction, containment or cessation of operation are documented and provided to the accountable owner.", "applies_from_tier": 1, "control_critical": true, "typical_evidence": ["Operating limits on the System Card"]}, {"id": "P3-02", "domain_id": "P3", "domain": "Operational boundaries", "requirement": "Operational control states are defined for this system, covering both model condition and service condition, including fail-safe or fail-open behaviour when the AI is unavailable.", "applies_from_tier": 2, "control_critical": true, "typical_evidence": ["State definitions"]}, {"id": "P3-03", "domain_id": "P3", "domain": "Operational boundaries", "requirement": "Measurable trigger conditions are defined for each transition between states.", "applies_from_tier": 2, "control_critical": true, "typical_evidence": ["Trigger table", "alert configuration"]}, {"id": "P3-04", "domain_id": "P3", "domain": "Operational boundaries", "requirement": "Decision authority is defined for each transition between states.", "applies_from_tier": 3, "control_critical": true, "typical_evidence": ["Authority table"]}, {"id": "P3-05", "domain_id": "P3", "domain": "Operational boundaries", "requirement": "State transitions and their rationale are logged.", "applies_from_tier": 3, "control_critical": false, "typical_evidence": ["State log"]}, {"id": "P3-06", "domain_id": "P3", "domain": "Operational boundaries", "requirement": "The system's technical permissions in other systems are limited to the capabilities declared in the System Definition. Any further permission is removed, or declared and assessed.", "applies_from_tier": 2, "control_critical": true, "typical_evidence": ["Permission inventory compared with capability list"]}, {"id": "P4-01", "domain_id": "P4", "domain": "Continuous assurance", "requirement": "Operational performance is monitored and reviewed by a named person at a defined interval.", "applies_from_tier": 1, "control_critical": true, "typical_evidence": ["Dashboard", "review record"]}, {"id": "P4-02", "domain_id": "P4", "domain": "Continuous assurance", "requirement": "Safety-relevant indicators are distinguished from general performance indicators.", "applies_from_tier": 2, "control_critical": false, "typical_evidence": ["Indicator list with classification"]}, {"id": "P4-03", "domain_id": "P4", "domain": "Continuous assurance", "requirement": "Targets and trigger levels are defined for safety-relevant indicators and linked to the state triggers in P3-03.", "applies_from_tier": 2, "control_critical": true, "typical_evidence": ["Indicator specification"]}, {"id": "P4-04", "domain_id": "P4", "domain": "Continuous assurance", "requirement": "Assurance coverage is reported using hazard-signal mapping: for each hazard in the risk record, whether an operational signal exists that would detect it before harm (full, partial or none), reported as three counts. Interim method; see 9.2.", "applies_from_tier": 3, "control_critical": false, "typical_evidence": ["Hazard-signal map"]}, {"id": "P4-05", "domain_id": "P4", "domain": "Continuous assurance", "requirement": "Both leading indicators (conditions that precede harm) and lagging indicators (harm and near misses that occurred) are tracked at a defined interval.", "applies_from_tier": 3, "control_critical": false, "typical_evidence": ["Indicator reports"]}, {"id": "P4-06", "domain_id": "P4", "domain": "Continuous assurance", "requirement": "For each High capability, monitoring covers the path where output became action with no human acceptance, using sampling, outcome tracking or independent checks.", "applies_from_tier": 2, "control_critical": true, "typical_evidence": ["Negative-space monitoring records"]}, {"id": "P5-01", "domain_id": "P5", "domain": "Occurrence and learning", "requirement": "A channel exists for reporting problems with system output, and users and affected staff know how to use it.", "applies_from_tier": 1, "control_critical": false, "typical_evidence": ["Channel", "reports received"]}, {"id": "P5-02", "domain_id": "P5", "domain": "Occurrence and learning", "requirement": "Occurrences are classified using a taxonomy that distinguishes at least deviation, near miss and incident (see Annex F).", "applies_from_tier": 2, "control_critical": false, "typical_evidence": ["Occurrence log"]}, {"id": "P5-03", "domain_id": "P5", "domain": "Occurrence and learning", "requirement": "Occurrences classed as Deviation or above are investigated for cause, and corrective action is recorded.", "applies_from_tier": 2, "control_critical": false, "typical_evidence": ["Investigation reports", "action log"]}, {"id": "P5-04", "domain_id": "P5", "domain": "Occurrence and learning", "requirement": "A return-to-service process is defined and evidenced for any capability leaving S3 or S4.", "applies_from_tier": 3, "control_critical": false, "typical_evidence": ["Return-to-service records"]}, {"id": "P5-05", "domain_id": "P5", "domain": "Occurrence and learning", "requirement": "Lessons from occurrences are fed into the risk record (P2) and the change process (P6).", "applies_from_tier": 3, "control_critical": false, "typical_evidence": ["Traceable updates"]}, {"id": "P6-01", "domain_id": "P6", "domain": "Change assurance", "requirement": "A configuration baseline is maintained that is sufficient to reconstruct the system that produced any given output: model and version, prompts and instructions, tools and the permissions they used, data and knowledge sources, persistent memory or context stores, and thresholds.", "applies_from_tier": 1, "control_critical": false, "typical_evidence": ["Configuration records", "version history"]}, {"id": "P6-02", "domain_id": "P6", "domain": "Change assurance", "requirement": "The operational significance of each change is assessed and recorded before release, judged by its potential effect on behaviour, boundaries, controls or risk, not by its technical size.", "applies_from_tier": 1, "control_critical": false, "typical_evidence": ["Change records"]}, {"id": "P6-03", "domain_id": "P6", "domain": "Change assurance", "requirement": "Changes are classified by impact level (administrative, configuration, behavioural, functional, boundary, safety control), with evidence requirements that increase with impact.", "applies_from_tier": 2, "control_critical": false, "typical_evidence": ["Change procedure", "classified changes"]}, {"id": "P6-04", "domain_id": "P6", "domain": "Change assurance", "requirement": "Changes classed as behavioural or higher are re-assessed against the risk record and operational boundaries before release.", "applies_from_tier": 3, "control_critical": false, "typical_evidence": ["Re-assessment records"]}, {"id": "P6-05", "domain_id": "P6", "domain": "Change assurance", "requirement": "External dependencies that can materially change system behaviour, including model providers and third-party data, are subject to change detection, version pinning, supplier notification, or evidenced compensating monitoring, in proportion to their significance.", "applies_from_tier": 2, "control_critical": false, "typical_evidence": ["Supplier terms", "version pinning", "drift monitoring"]}, {"id": "P7-01", "domain_id": "P7", "domain": "Human and AI operation", "requirement": "Every human role that receives, accepts or acts on system output is identified.", "applies_from_tier": 1, "control_critical": false, "typical_evidence": ["Role list"]}, {"id": "P7-02", "domain_id": "P7", "domain": "Human and AI operation", "requirement": "Risks of over-reliance and under-reliance are assessed for each such role.", "applies_from_tier": 2, "control_critical": false, "typical_evidence": ["Human factors assessment"]}, {"id": "P7-03", "domain_id": "P7", "domain": "Human and AI operation", "requirement": "Escalation authority and criteria are documented for each such role.", "applies_from_tier": 2, "control_critical": false, "typical_evidence": ["Procedure"]}, {"id": "P7-04", "domain_id": "P7", "domain": "Human and AI operation", "requirement": "Competency requirements are defined and current for everyone holding intervention authority.", "applies_from_tier": 3, "control_critical": false, "typical_evidence": ["Training and competency records"]}, {"id": "P7-05", "domain_id": "P7", "domain": "Human and AI operation", "requirement": "Degradation of oversight effectiveness is assessed, including workload, alert saturation, complacency and incentives that discourage challenge.", "applies_from_tier": 3, "control_critical": false, "typical_evidence": ["Assessment", "workload data"]}], "assessment_values": {"Compliant": "Defined, in use, and a record shows it operating within the review period. At Tier 1, defined and in use is sufficient.", "Partially Compliant": "Defined but incomplete, inconsistently applied, or no record of operation.", "Not Demonstrated": "Evidence insufficient to establish that the control is defined and in use. Does not mean it does not exist.", "Not Applicable": "Requirement is above the system's Consequence Tier."}, "review_period": "12 months, or the time since the last material change, whichever is shorter.", "evidence_rules": [{"id": "Rule 1", "name": "Evidenced, not assumed", "text": "A control owned by another function counts only if evidenced against this system: a named owner, a record the assessor has seen, and a demonstrated link to this system's decision path. An assumed control is Not Demonstrated."}, {"id": "Rule 2", "name": "Absence of harm is not evidence", "text": "A clean incident record does not downgrade an unassessed risk, and is not evidence of control effectiveness where monitoring that would detect the harm is absent or of unknown coverage."}, {"id": "Rule 3", "name": "Boundary Rule", "text": "A hazard that can affect a capability's decision path must be recorded even when its control is owned by another function, naming the owning function and the interface."}], "finding_criticality": {"applies_to": "Every Partially Compliant or Not Demonstrated result, rated separately for each capability it affects.", "table": {"control_critical": {"High": "Critical", "Medium": "Significant", "Low": "Routine"}, "other": {"High": "Significant", "Medium": "Significant", "Low": "Routine"}}, "adjustment": "May be raised one level with written reasons; never lowered. Three levels only; no numeric score."}, "decision": {"scope": "Per capability", "outcomes": {"Not Ready": "Any open Critical finding", "Ready with Conditions": "Significant findings, or Critical findings cleared by evidenced compensating control or time-limited risk acceptance, and no open Critical", "Ready": "Routine findings only, or none"}, "clearing_critical": ["An evidenced compensating control (Rule 1)", "A documented, time-limited risk acceptance signed by someone holding authority under P1-05(a) to stop that capability"], "not_ready_in_operation": "Move the capability to S2 Restricted or S3 Contained until cleared."}, "assessment_triggers": ["Before first operation", "Periodic review, at least every 12 months", "Change classed as behavioural or higher", "Before leaving S3 or S4", "Proposal to retire, or capability no longer meets its purpose"], "operating_loop": ["Define", "Assess", "Bound", "Monitor", "Detect", "Intervene", "Report", "Investigate", "Correct", "Verify", "Return, Restrict or Retire", "Learn"], "occurrence_classes": ["Observation", "Unsafe condition", "Deviation", "Near miss", "Incident", "Serious incident"]}</script>
+<script id="oaaf-example" type="application/json">{"system": {"name": "Field Operations Agent (synthetic example, Annex B3)", "declared_tier": 2}, "capabilities": [{"name": "Draft weekly schedule", "human_acceptance": true, "irreversible_or_material": false}, {"name": "Raise purchase orders below 2,000 euros", "human_acceptance": false, "irreversible_or_material": false}, {"name": "Reorder crew job queue", "human_acceptance": false, "irreversible_or_material": true}], "results": [{"requirement": "P1-01", "value": "Compliant"}, {"requirement": "P3-06", "value": "Not Demonstrated", "note": "Shared service account can close work orders and edit asset records; neither is declared."}, {"requirement": "P4-06", "value": "Not Demonstrated", "capabilities": ["Reorder crew job queue"], "note": "No check on jobs pushed down the queue."}, {"requirement": "P3-03", "value": "Partially Compliant", "capabilities": ["Reorder crew job queue", "Raise purchase orders below 2,000 euros"], "note": "No trigger for stale sensor data."}, {"requirement": "P6-01", "value": "Partially Compliant", "note": "Persistent agent notes not in the configuration baseline."}, {"requirement": "P7-02", "value": "Not Demonstrated", "capabilities": ["Reorder crew job queue"], "note": "Supervisors no longer check queue order."}, {"requirement": "P6-05", "value": "Partially Compliant", "note": "Model version pinned; provider deprecation dates not tracked."}]}</script>
+<script>
+const F = JSON.parse(document.getElementById('oaaf-data').textContent);
+const EXAMPLE = JSON.parse(document.getElementById('oaaf-example').textContent);
+const REQS = F.requirements;
+const LEVELS = ['Routine','Significant','Critical'];
+const KEY = 'oaaf-tool-v1';
+
+let state = blank();
+function blank(){return {name:'',material:'',caps:[{name:'',q1:null,q2:null}],tier:{harm:1,rev:1,auto:1},results:{}};}
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function load(){try{const s=localStorage.getItem(KEY);if(s){state=JSON.parse(s);}}catch(e){}}
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function capCrit(q1,q2){ // Section 4.3
+  if(q1===null||q2===null) return null;
+  if(!q1 && q2) return 'High';
+  if(q1 && !q2) return 'Low';
+  return 'Medium';
+}
+function findingCrit(cc,capc,raise){ // Section 7.3
+  let base = cc ? {High:'Critical',Medium:'Significant',Low:'Routine'}[capc]
+                : {High:'Significant',Medium:'Significant',Low:'Routine'}[capc];
+  if(raise){base = LEVELS[Math.min(LEVELS.indexOf(base)+1,2)];}
+  return base;
+}
+function caps(){return state.caps.filter(c=>c.name.trim()).map(c=>({name:c.name.trim(),crit:capCrit(c.q1,c.q2)}));}
+function declaredTier(){return Math.max(state.tier.harm,state.tier.rev,state.tier.auto);}
+function effectiveTier(){
+  const cs=caps(); const t=declaredTier();
+  return cs.some(c=>c.crit==='High') ? Math.max(t,2) : t;
+}
+
+// ---------- rendering ----------
+function renderCaps(){
+  const box=document.getElementById('caps'); box.innerHTML='';
+  state.caps.forEach((c,i)=>{
+    const crit=capCrit(c.q1,c.q2);
+    const d=document.createElement('div'); d.className='cap';
+    d.innerHTML=`<div class="cap-grid">
+      <div><label>Capability ${i+1}</label><input type="text" data-i="${i}" data-k="name" value="${esc(c.name)}" placeholder="for example, Issue refunds"></div>
+      <div><label>Q1. Positive human acceptance?</label><select data-i="${i}" data-k="q1">${yn(c.q1)}</select></div>
+      <div><label>Q2. Irreversible or material?</label><select data-i="${i}" data-k="q2">${yn(c.q2)}</select></div>
+      <div>${state.caps.length>1?`<button class="link" data-del="${i}" aria-label="Remove capability">Remove</button>`:''}</div>
+    </div>
+    <div class="why">${crit?`Criticality: <span class="badge b-${crit}">${crit}</span> ${why(c.q1,c.q2)}`:'Answer both questions to rate this capability.'}${crit&&crit!=='Low'?' Draw its decision path, including the branch where no human accepts the output.':''}</div>`;
+    box.appendChild(d);
+  });
+  box.querySelectorAll('input,select').forEach(el=>el.addEventListener('change',onCapChange));
+  box.querySelectorAll('input[data-k=name]').forEach(el=>el.addEventListener('input',onCapChange));
+  box.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{state.caps.splice(+b.dataset.del,1);update(true);}));
+}
+function yn(v){return `<option value="" ${v===null?'selected':''}>Choose</option><option value="yes" ${v===true?'selected':''}>Yes</option><option value="no" ${v===false?'selected':''}>No</option>`;}
+function why(q1,q2){
+  if(!q1&&q2) return 'No human accepts the output, and an error would be serious. This is the path OAAF watches most closely.';
+  if(!q1&&!q2) return 'No human accepts the output, but an error would be reversible and below the threshold.';
+  if(q1&&q2) return 'A human accepts the output, but an error that got through would be serious.';
+  return 'A human accepts the output, and an error would be reversible and below the threshold.';
+}
+function onCapChange(e){
+  const i=+e.target.dataset.i, k=e.target.dataset.k;
+  if(k==='name'){state.caps[i].name=e.target.value; save(); if(e.type==='input'){renderTier();renderReqs();renderDecision();return;}}
+  else {state.caps[i][k]= e.target.value===''?null:e.target.value==='yes';}
+  update(true);
+}
+
+function renderTierSelects(){
+  const T=F.consequence_tiers;
+  const fill=(id,key,field)=>{
+    const s=document.getElementById(id);
+    s.innerHTML=[1,2,3].map(t=>`<option value="${t}" ${state.tier[key]===t?'selected':''}>Tier ${t}: ${esc(T[t][field])}</option>`).join('');
+    s.onchange=()=>{state.tier[key]=+s.value;update(false);};
+  };
+  fill('fHarm','harm','harm'); fill('fRev','rev','reversibility'); fill('fAuto','auto','autonomy');
+}
+function renderTier(){
+  const d=declaredTier(), e=effectiveTier(), n=F.consequence_tiers[e].requirements_applying;
+  let html=`<b>Consequence Tier ${e}.</b> ${n} of 36 requirements apply.`;
+  if(e!==d) html+=` Raised from Tier ${d} because at least one capability is High.`;
+  if(e===1) html+=` This is the one-afternoon quick start: eight requirements on one page.`;
+  if(e===2) html+=` The assessment should be reviewed by someone outside the team that runs the system.`;
+  if(e===3) html+=` The assessment should be carried out by someone independent of both the build and operating teams.`;
+  document.getElementById('tierOut').innerHTML=html;
+}
+
+function renderReqs(){
+  const t=effectiveTier(); const cs=caps();
+  const box=document.getElementById('reqs'); box.innerHTML='';
+  let dom='';
+  REQS.filter(r=>r.applies_from_tier<=t).forEach(r=>{
+    if(r.domain_id!==dom){dom=r.domain_id; const h=document.createElement('h3'); h.textContent=`${r.domain_id} ${r.domain}`; box.appendChild(h);}
+    const res=state.results[r.id]||{value:''};
+    const d=document.createElement('div'); d.className='req';
+    const finding = res.value==='Partially Compliant'||res.value==='Not Demonstrated';
+    const affected = res.caps||[];
+    d.innerHTML=`<div class="req-head">
+      <div class="rid">${r.id}${r.control_critical?' <span class="cc" title="Control-critical">◆</span>':''}</div>
+      <div>${esc(r.requirement)}<div class="ev">Typical evidence: ${esc((r.typical_evidence||[]).join(', '))}</div></div>
+      <div><select data-r="${r.id}" data-f="value" aria-label="Result for ${r.id}">
+        ${['','Compliant','Partially Compliant','Not Demonstrated'].map(v=>`<option value="${v}" ${res.value===v?'selected':''}>${v||'Not yet assessed'}</option>`).join('')}
+      </select></div></div>
+      ${finding?`<div class="more">
+        <div class="caps-check"><span class="small">Capabilities affected (none ticked means all):</span><br>${cs.map(c=>`<label><input type="checkbox" data-r="${r.id}" data-f="cap" value="${esc(c.name)}" ${affected.includes(c.name)?'checked':''}> ${esc(c.name)}</label>`).join('')||'<span class="small">Add capabilities in step 2.</span>'}</div>
+        <div><label>What you found</label><textarea data-r="${r.id}" data-f="note">${esc(res.note||'')}</textarea></div>
+        <div class="row" style="grid-template-columns:1fr 1fr">
+          <div><label>Status</label><select data-r="${r.id}" data-f="status">
+            ${[['open','Open'],['mitigated','Cleared by evidenced compensating control'],['risk_accepted','Cleared by time-limited risk acceptance'],['closed','Closed']].map(([v,l])=>`<option value="${v}" ${(res.status||'open')===v?'selected':''}>${l}</option>`).join('')}
+          </select></div>
+          <div><label><input type="checkbox" data-r="${r.id}" data-f="raise" ${res.raise?'checked':''}> Raise one level</label>
+          <input type="text" data-r="${r.id}" data-f="raise_reason" value="${esc(res.raise_reason||'')}" placeholder="Written reason (required if raised)"></div>
+        </div>
+        ${res.status==='risk_accepted'?`<div><label>Accepted by (must hold authority to stop this capability), and expiry</label><input type="text" data-r="${r.id}" data-f="accepted_by" value="${esc(res.accepted_by||'')}"></div>`:''}
+      </div>`:''}`;
+    box.appendChild(d);
+  });
+  box.querySelectorAll('[data-r]').forEach(el=>{
+    const ev = (el.tagName==='TEXTAREA'||el.type==='text')?'input':'change';
+    el.addEventListener(ev,onReqChange);
+  });
+}
+function onReqChange(e){
+  const id=e.target.dataset.r, f=e.target.dataset.f;
+  const res=state.results[id]||(state.results[id]={value:''});
+  let rerender=false;
+  if(f==='value'){res.value=e.target.value; rerender=true;}
+  else if(f==='cap'){
+    res.caps=res.caps||[];
+    if(e.target.checked){if(!res.caps.includes(e.target.value))res.caps.push(e.target.value);}
+    else res.caps=res.caps.filter(x=>x!==e.target.value);
+  }
+  else if(f==='raise'){res.raise=e.target.checked;}
+  else if(f==='status'){res.status=e.target.value; rerender=true;}
+  else {res[f]=e.target.value;}
+  if(!res.value) delete state.results[id];
+  save(); if(rerender) renderReqs(); renderDecision();
+}
+
+// ---------- decision (mirrors oaaf_decide.py) ----------
+function decide(){
+  const cs=caps().filter(c=>c.crit);
+  const t=effectiveTier();
+  const byId=Object.fromEntries(REQS.map(r=>[r.id,r]));
+  const applicable=REQS.filter(r=>r.applies_from_tier<=t).map(r=>r.id);
+  const warnings=[]; const findings=[];
+  if(caps().some(c=>!c.crit)) warnings.push('Some capabilities have not been rated yet and are left out of the decision.');
+  if(!state.material.trim()) warnings.push('No materiality threshold set: the default applies (money, third-party commitments and external communication are material).');
+  Object.entries(state.results).forEach(([id,res])=>{
+    if(!applicable.includes(id)||!res.value||res.value==='Compliant') return;
+    const r=byId[id]; const status=res.status||'open';
+    const aff=(res.caps&&res.caps.length)?res.caps:cs.map(c=>c.name);
+    if(res.raise && !(res.raise_reason||'').trim()) warnings.push(`${id}: raised one level without a written reason (Section 7.3 requires one).`);
+    aff.forEach(name=>{
+      const c=cs.find(x=>x.name===name); if(!c) return;
+      const crit=findingCrit(r.control_critical,c.crit,!!res.raise);
+      if(status==='risk_accepted'&&crit==='Critical'&&!(res.accepted_by||'').trim()) warnings.push(`${id}: risk acceptance needs a signatory with authority to stop the capability under P1-05(a), and an expiry date.`);
+      findings.push({id,text:r.requirement,value:res.value,cap:name,crit,status,note:res.note||''});
+    });
+  });
+  const decisions=cs.map(c=>{
+    const mine=findings.filter(f=>f.cap===c.name);
+    const oc=mine.filter(f=>f.status==='open'&&f.crit==='Critical').length;
+    const os=mine.filter(f=>f.status==='open'&&f.crit==='Significant').length;
+    const cl=mine.filter(f=>(f.status==='mitigated'||f.status==='risk_accepted')&&f.crit!=='Routine').length;
+    let outcome='Ready',action='';
+    if(oc){outcome='Not Ready';action='If already operating, move to S2 Restricted (insert human acceptance or reduce limits) or S3 Contained until the Critical findings are cleared.';}
+    else if(os||cl){outcome='Ready with Conditions';action='Give each condition an owner and a date.';}
+    return {name:c.name,crit:c.crit,oc,os,cl,outcome,action};
+  });
+  const notAssessed=applicable.filter(id=>!state.results[id]);
+  return {t,applicable,findings,decisions,warnings,notAssessed};
+}
+function cls(o){return o==='Not Ready'?'NotReady':o==='Ready'?'Ready':'Cond';}
+function renderDecision(){
+  const D=decide();
+  const dec=document.getElementById('decisions');
+  if(!D.decisions.length){dec.innerHTML='<p class="small">Add and rate at least one capability.</p>';}
+  else dec.innerHTML=`<table><tr><th>Capability</th><th>Criticality</th><th>Open Critical</th><th>Open Significant</th><th>Outcome</th></tr>${D.decisions.map(d=>`<tr><td>${esc(d.name)}${d.action?`<div class="small">${d.action}</div>`:''}</td><td><span class="badge b-${d.crit}">${d.crit}</span></td><td>${d.oc}</td><td>${d.os}</td><td><span class="badge b-${cls(d.outcome)}">${d.outcome}</span></td></tr>`).join('')}</table>`;
+  const fb=document.getElementById('findings');
+  const sorted=[...D.findings].sort((a,b)=>LEVELS.indexOf(b.crit)-LEVELS.indexOf(a.crit)||a.id.localeCompare(b.id));
+  fb.innerHTML=sorted.length?`<table><tr><th>Requirement</th><th>Capability</th><th>Result</th><th>Criticality</th><th>Status</th></tr>${sorted.map(f=>`<tr><td><b>${f.id}</b><div class="small">${esc(f.note)}</div></td><td>${esc(f.cap)}</td><td>${f.value}</td><td><span class="badge b-${f.crit}">${f.crit}</span></td><td>${f.status.replace('_',' ')}</td></tr>`).join('')}</table>`:'<p class="small">No findings yet.</p>';
+  const w=[...D.warnings]; if(D.notAssessed.length) w.push(`${D.notAssessed.length} of ${D.applicable.length} applicable requirements not yet assessed: ${D.notAssessed.join(', ')}.`);
+  document.getElementById('warnings').innerHTML=w.length?`<div class="callout warn small">${w.map(esc).join('<br>')}</div>`:'';
+}
+
+// ---------- export / import ----------
+function toJSON(){
+  const cs=state.caps.filter(c=>c.name.trim()&&c.q1!==null&&c.q2!==null);
+  return {system:{name:state.name||'Unnamed system',declared_tier:declaredTier(),materiality_threshold:state.material||null},
+    capabilities:cs.map(c=>({name:c.name.trim(),human_acceptance:c.q1,irreversible_or_material:c.q2})),
+    results:Object.entries(state.results).filter(([,r])=>r.value).map(([id,r])=>{
+      const o={requirement:id,value:r.value};
+      if(r.value!=='Compliant'){
+        if(r.caps&&r.caps.length)o.capabilities=r.caps;
+        if(r.note)o.note=r.note;
+        if(r.status&&r.status!=='open')o.status=r.status;
+        if(r.raise){o.raise_one_level=true;o.raise_reason=r.raise_reason||'';}
+        if(r.accepted_by)o.accepted_by=r.accepted_by;
+      }
+      return o;})};
+}
+function fromJSON(j){
+  const s=blank();
+  s.name=(j.system&&j.system.name)||''; s.material=(j.system&&j.system.materiality_threshold)||'';
+  const t=(j.system&&+j.system.declared_tier)||1; s.tier={harm:t,rev:1,auto:1};
+  s.caps=(j.capabilities||[]).map(c=>({name:c.name,q1:!!c.human_acceptance,q2:!!c.irreversible_or_material}));
+  if(!s.caps.length)s.caps=[{name:'',q1:null,q2:null}];
+  (j.results||[]).forEach(r=>{s.results[r.requirement]={value:r.value,caps:r.capabilities||[],note:r.note||'',status:r.status||'open',raise:!!r.raise_one_level,raise_reason:r.raise_reason||'',accepted_by:r.accepted_by||''};});
+  return s;
+}
+function toMarkdown(){
+  const D=decide();
+  const L=[`# OAAF assessment: ${state.name||'unnamed system'}`,'',`Effective Consequence Tier: **${D.t}** (${D.applicable.length} requirements apply)`,''];
+  if(state.material)L.push(`Materiality threshold: ${state.material}`,'');
+  L.push('## Decision per capability','','| Capability | Criticality | Open Critical | Open Significant | Outcome |','|---|---|---|---|---|');
+  D.decisions.forEach(d=>L.push(`| ${d.name} | ${d.crit} | ${d.oc} | ${d.os} | **${d.outcome}** |`));
+  L.push('','## Findings','');
+  if(D.findings.length){L.push('| Requirement | Capability | Result | Criticality | Status | Note |','|---|---|---|---|---|---|');
+    [...D.findings].sort((a,b)=>LEVELS.indexOf(b.crit)-LEVELS.indexOf(a.crit)).forEach(f=>L.push(`| ${f.id} | ${f.cap} | ${f.value} | ${f.crit} | ${f.status} | ${f.note.replace(/\|/g,'/')} |`));}
+  else L.push('No findings.');
+  if(D.notAssessed.length)L.push('','## Not yet assessed','',D.notAssessed.join(', '));
+  if(D.warnings.length)L.push('','## Warnings','',...D.warnings.map(w=>'- '+w));
+  L.push('','*Produced with the OAAF online assessment tool. OAAF v1.0, Armend Verbovci, CC BY 4.0, https://doi.org/10.5281/zenodo.24352952*');
+  return L.join('\n');
+}
+
+function update(full){save(); if(full)renderCaps(); renderTier(); renderReqs(); renderDecision();}
+function renderAll(){
+  document.getElementById('sysname').value=state.name; document.getElementById('material').value=state.material;
+  renderTierSelects(); update(true);
+}
+
+document.getElementById('sysname').addEventListener('input',e=>{state.name=e.target.value;save();});
+document.getElementById('material').addEventListener('input',e=>{state.material=e.target.value;save();renderDecision();});
+document.getElementById('addCap').onclick=()=>{state.caps.push({name:'',q1:null,q2:null});update(true);};
+document.getElementById('loadExample').onclick=()=>{state=fromJSON(EXAMPLE);state.material='2,000 euros';renderAll();};
+document.getElementById('resetBtn').onclick=()=>{state=blank();renderAll();};
+document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
+document.getElementById('importFile').onchange=e=>{
+  const f=e.target.files[0]; if(!f)return; const rd=new FileReader();
+  rd.onload=()=>{try{state=fromJSON(JSON.parse(rd.result));renderAll();}catch(err){document.getElementById('warnings').innerHTML='<div class="callout warn small">That file could not be read as an OAAF assessment.</div>';}};
+  rd.readAsText(f);
+};
+document.getElementById('copyMd').onclick=async e=>{
+  const md=toMarkdown();
+  try{await navigator.clipboard.writeText(md);e.target.textContent='Copied';setTimeout(()=>e.target.textContent='Copy report (Markdown)',1500);}
+  catch(err){const p=document.createElement('pre');p.textContent=md;document.getElementById('warnings').appendChild(p);}
+};
+document.getElementById('dlJson').onclick=()=>{
+  const blob=new Blob([JSON.stringify(toJSON(),null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=(state.name||'oaaf-assessment').replace(/[^\w-]+/g,'_')+'.json';a.click();
+};
+document.getElementById('printBtn').onclick=()=>window.print();
+
+load(); renderAll();
+</script>
+</body>
+</html>

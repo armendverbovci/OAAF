@@ -1,0 +1,48 @@
+name: Two-Assessor Challenge submission
+description: Submit your independent OAAF assessment of the ClaimPilot challenge case.
+title: "Challenge submission: ClaimPilot"
+labels: ["challenge-submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking part. Please submit only after completing your assessment on your own, and before reading other submissions.
+        Your submission will be compared with others using `challenge/compare.py` and summarised anonymously unless you ask to be named.
+  - type: textarea
+    id: assessment
+    attributes:
+      label: Assessment JSON
+      description: Paste the JSON downloaded from the online tool (Download assessment).
+      render: json
+    validations:
+      required: true
+  - type: dropdown
+    id: background
+    attributes:
+      label: Your main background
+      options:
+        - Risk, compliance or internal audit
+        - AI governance
+        - Engineering, data science or ML
+        - Operations
+        - Safety management (any sector)
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: time
+    attributes:
+      label: Roughly how long did the assessment take?
+  - type: textarea
+    id: hardest
+    attributes:
+      label: Which items were hardest to call, and why?
+      description: This is the most useful part for improving the framework.
+  - type: checkboxes
+    id: credit
+    attributes:
+      label: Credit
+      options:
+        - label: I would like to be credited by name (GitHub username) in OAAF version 1.1.
+        - label: I assessed this case alone and did not read other submissions first.
+          required: true
