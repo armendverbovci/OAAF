@@ -1,0 +1,36 @@
+name: Report from real use
+description: Tell us how OAAF worked when you applied it to a real AI system or agent.
+title: "Real use report: "
+labels: ["real-use"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Results from real use are the most valuable feedback OAAF can get. Please do not include confidential information. Describe the system in general terms only.
+  - type: input
+    id: sector
+    attributes:
+      label: Sector and type of system (general terms)
+      placeholder: for example, retail customer service agent
+    validations:
+      required: true
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Consequence Tier you reached
+      options: ["Tier 1", "Tier 2", "Tier 3", "Did not finish scoping"]
+  - type: textarea
+    id: worked
+    attributes:
+      label: What worked
+  - type: textarea
+    id: failed
+    attributes:
+      label: Where the framework was unclear, wrong or missing something
+    validations:
+      required: true
+  - type: dropdown
+    id: independent
+    attributes:
+      label: Did more than one person assess the system independently?
+      options: ["No", "Yes, and we reached the same decisions", "Yes, and our decisions differed"]

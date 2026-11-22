@@ -8,9 +8,12 @@ Version 1.0, November 2026 · Author: Armend Verbovci · Licence: [CC BY 4.0](LI
 
 | Read | Use | Automate |
 |---|---|---|
-| [Full framework (web)](FRAMEWORK.md) | [Assessment workbook (Excel)](downloads/OAAF_v1.0_Assessment_Workbook.xlsx) | [AI assistant skill](skills/oaaf-assessment/SKILL.md) |
-| [Framework (PDF)](downloads/OAAF_v1.0.pdf) | [Quick start for simple systems](#quick-start-one-afternoon) | [Machine-readable rules (oaaf.json)](oaaf.json) |
+| [Full framework (web)](FRAMEWORK.md) | **[Online assessment tool](tool/)** | [AI assistant skill](skills/oaaf-assessment/SKILL.md) |
+| [Framework (PDF)](downloads/OAAF_v1.0.pdf) | [Assessment workbook (Excel)](downloads/OAAF_v1.0_Assessment_Workbook.xlsx) | [MCP server for AI assistants](mcp/) |
+| [Introduction to OAAF (article)](blog/introducing-oaaf.md) | [Quick start for simple systems](#quick-start-one-afternoon) | [Machine-readable rules (oaaf.json)](oaaf.json) |
 | [Frequently asked questions](FAQ.md) | [Worked examples](FRAMEWORK.md#annex-b-worked-examples) | [Decision script](skills/oaaf-assessment/scripts/oaaf_decide.py) |
+
+**Help test OAAF:** take the [Two-Assessor Challenge](challenge/). Assess a synthetic AI agent case on your own and see whether you reach the same decision as other people.
 
 ## The problem
 
@@ -65,6 +68,8 @@ If any capability turns out to be High, use the full assessment instead.
 
 The [`skills/oaaf-assessment`](skills/oaaf-assessment/) folder is an open-format agent skill. Add it to an AI assistant that supports skills (for example Claude, by uploading the zipped folder from [downloads](downloads/)) and ask it to "run an OAAF assessment" on your system. The assistant guides you through the questions, then applies the decision rules with a small script so that the same answers always give the same decision.
 
+Assistants that support the Model Context Protocol can use the [OAAF MCP server](mcp/), which has tools for rating capabilities, listing requirements and applying the decision rules. It uses only the Python standard library.
+
 Developers and governance tools can load [`oaaf.json`](oaaf.json), which contains all 36 requirements, tiers, control states, evidence rules and decision rules in structured form.
 
 ## How OAAF relates to other frameworks
@@ -73,7 +78,7 @@ OAAF does not replace ISO/IEC 42001, the NIST AI Risk Management Framework or th
 
 ## Status and limitations
 
-Version 1.0 is a published method for use and comment. The worked examples are synthetic, and the decision rules have been checked by design rather than by independent assessors on a real system. Section 9 of the framework sets out the limitations in full. Results from real use, especially two people assessing the same system independently, are the most useful feedback.
+Version 1.0 is a published method for use and comment. The worked examples are synthetic, and the decision rules have been checked by design rather than by independent assessors on a real system. Section 9 of the framework sets out the limitations in full. Results from real use, especially two people assessing the same system independently, are the most useful feedback. You can [report real use](https://github.com/armendverbovci/OAAF/issues/new?template=real-use-report.yml) or take the [Two-Assessor Challenge](challenge/).
 
 ## Cite
 

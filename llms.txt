@@ -12,9 +12,20 @@ OAAF rates each capability of an AI system with two questions (does a human posi
 
 ## Machine-readable and tools
 
+- [Online assessment tool](tool/): runs in the browser; rates capabilities, sets the tier, records findings and applies the decision rules
+- [MCP server](mcp/README.md): Model Context Protocol server with tools oaaf_overview, oaaf_rate_capability, oaaf_applicable_requirements, oaaf_get_requirement and oaaf_decide
 - [oaaf.json](oaaf.json): all requirements, tiers, control states, evidence rules and decision rules in structured form
 - [Agent skill](skills/oaaf-assessment/SKILL.md): guides a user through an OAAF assessment
 - [Decision script](skills/oaaf-assessment/scripts/oaaf_decide.py): applies the decision rules deterministically
+
+## Articles
+
+- [Introducing OAAF](blog/introducing-oaaf.md): long-form introduction for a general technical audience
+- [Negative-space assurance](blog/negative-space-assurance.md): why oversight misses the AI decisions nobody reviews, and a five-question self-check
+
+## Testing the framework
+
+- [Two-Assessor Challenge](challenge/README.md): a synthetic AI agent case (ClaimPilot) for testing whether independent assessors reach the same decision; comparison script in challenge/compare.py
 
 ## Optional
 

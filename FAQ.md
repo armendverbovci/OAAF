@@ -69,3 +69,11 @@ Yes. The repository includes an open-format agent skill (`skills/oaaf-assessment
 ## Who developed OAAF?
 
 Armend Verbovci, an air navigation services professional with more than twenty years in aviation, including ten years as an air traffic controller and more than a decade leading safety, quality and compliance functions. It was developed independently, in a personal capacity.
+
+## Is there a tool for running an OAAF assessment?
+
+Yes. The [online assessment tool](tool/) runs in your browser and sends nothing anywhere. It rates capabilities with the two-question test, shows the requirements that apply, and gives each capability a decision. There's also an [Excel workbook](downloads/OAAF_v1.0_Assessment_Workbook.xlsx), an [AI assistant skill](skills/oaaf-assessment/SKILL.md) and an [MCP server](mcp/) for assistants. All of them apply the same rules.
+
+## How can I help improve OAAF?
+
+Take the [Two-Assessor Challenge](challenge/), which tests whether independent assessors reach the same decision. Or [report what happened](https://github.com/armendverbovci/OAAF/issues/new?template=real-use-report.yml) when you used OAAF on a real system. Changes in later versions will cite the results that justified them.
